@@ -1,0 +1,37 @@
+﻿@typeparam TItem
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        Grid.AddColumn(this);
+    }
+
+    internal object GetDataValue(TItem item)
+    {
+        if (Property != null)
+        {
+            var property = typeof(TItem).GetProperty(Property);
+
+            if (property != null)
+            {
+                return property.GetValue(item);
+            }
+        }
+        else if (!typeof(TItem).IsClass)
+        {
+            return item;
+        }
+
+        return default;
+    }
+
+    [CascadingParameter]
+    public FastGrid<TItem> Grid { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Property { get; set; }
+}

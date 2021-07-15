@@ -1,0 +1,63 @@
+﻿@page "/"
+
+<FastGrid Data=Books Title="Lista dos Livros">
+    <Columns>
+        <FastGridColumn Property="Id" TItem="Book" Title="ID" />
+        <FastGridColumn Property="Name" TItem="Book" Title="Nome" />
+        <FastGridColumn Property="PageCount" TItem="Book" />
+        <FastGridColumn Property="WasRead" TItem="Book" Title="Foi lido" />
+    </Columns>
+</FastGrid>
+
+<button @onclick=@Update >Update</button>
+
+@code
+{
+    private int Counter;
+
+    private void Update()
+    {
+        Numbers[0] = ++Counter;
+    }
+
+    protected override void OnInitialized()
+    {
+        Numbers = (int[])Array.CreateInstance(typeof(int), 10);
+
+        for (int i = 0; i < Numbers.Length; i++)
+        {
+            Numbers[i] = i + 1;
+        }
+    }
+
+    public int[] Numbers;
+
+    public List<Book> Books = new List<Book>()
+    {
+        new Book("A", 100, false),
+        new Book("B", 90,  true ),
+        new Book("C", 80,  false),
+        new Book("D", 70,  true ),
+        new Book("E", 60,  false),
+        new Book("F", 50,  true ),
+        new Book("G", 40,  false),
+        new Book("H", 30,  true ),
+        new Book("I", 20,  false),
+        new Book("J", 10,  true )
+    };
+
+    public class Book
+    {
+        public Book(string name, int pageCount, bool wasRead)
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+            PageCount = pageCount;
+            WasRead = wasRead;
+        }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public int PageCount { get; set; }
+        public bool WasRead { get; set; }
+    }
+}

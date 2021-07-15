@@ -1,0 +1,108 @@
+﻿@typeparam TItem
+
+<CascadingValue IsFixed=true Value=this>
+    @Columns
+</CascadingValue>
+
+@if (Title != null)
+{
+    <h1>
+        @Title
+    </h1>
+}
+else
+{
+    <h1>
+        @typeof(TItem).Name List
+    </h1>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            @if (Columns == null)
+            {
+                @if (typeof(TItem).IsClass)
+                {
+                    @foreach (var property in typeof(TItem).GetProperties())
+                    {
+                        <th>@property.Name</th>
+                    }
+                }
+                else
+                {
+                    <th>@typeof(TItem).Name</th>
+                }
+            }
+            else
+            {
+                @foreach (var column in GridColumns)
+                {
+                    <th>@(column.Title ?? column.Property)</th>
+                }
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Data != null)
+        {
+            @foreach (var item in Data)
+            {
+                <tr>
+                    @if (Columns == null)
+                    {
+                        @if (typeof(TItem).IsClass)
+                        {
+                            @foreach (var property in item.GetType().GetProperties())
+                            {
+                                <th>@property.GetValue(item)</th>
+                            }
+                        }
+                        else
+                        {
+                            <th>@item</th>
+                        }
+                    }
+                    else
+                    {
+                        @foreach (var column in GridColumns)
+                        {
+                            <th>@column.GetDataValue(item)</th>
+                        }
+                    }
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code
+{
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public IList<TItem> Data { get; set; }
+
+    [Parameter]
+    public RenderFragment Columns { get; set; }
+
+    private readonly List<FastGridColumn<TItem>> GridColumns = new List<FastGridColumn<TItem>>();
+
+    internal void AddColumn(FastGridColumn<TItem> column)
+    {
+        GridColumns.Add(column);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // The first render will instantiate the GridColumn defined in the ChildContent.
+            // GridColumn calls AddColumn during its initialization. This means that until
+            // the first render is completed, the columns collection is empty.
+            // Calling StateHasChanged() will re-render the component, so the second time it will know the columns
+            StateHasChanged();
+        }
+    }
+}
