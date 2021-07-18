@@ -1,24 +1,24 @@
-﻿@typeparam TItem
-
-@code
+﻿@code
 {
     protected override void OnInitialized()
     {
         Grid.AddColumn(this);
     }
 
-    internal object GetDataValue(TItem item)
+    internal object GetDataValue(dynamic item)
     {
+        var type = item.GetType();
+
         if (Property != null)
         {
-            var property = typeof(TItem).GetProperty(Property);
+            var property = type.GetProperty(Property);
 
             if (property != null)
             {
                 return property.GetValue(item);
             }
         }
-        else if (!typeof(TItem).IsClass)
+        else if (!type.IsClass)
         {
             return item;
         }
@@ -27,11 +27,39 @@
     }
 
     [CascadingParameter]
-    public FastGrid<TItem> Grid { get; set; }
+    private IFastGrid Grid { get; set; }
 
+    private string _title;
     [Parameter]
-    public string Title { get; set; }
+    public string Title
+    {
+        get
+        {
+            if (_title == null)
+            {
+                if (Grid.Type.IsClass)
+                {
+                    _title = Property;
+                }
+                else
+                {
+                    _title = Grid.Type.Name;
+                }
+            }
+
+            return _title;
+        }
+        set
+        {
+            _title = value;
+        }
+    }
 
     [Parameter]
     public string Property { get; set; }
+
+    [Parameter]
+    public bool Sortable { get; set; }
+
+    public bool? SortOrder { get; set; }
 }

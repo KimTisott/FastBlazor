@@ -1,23 +1,21 @@
 ﻿@page "/"
 
-<FastGrid Data=Books Title="Lista dos Livros">
+<FastGrid Data=@(Books)>
     <Columns>
-        <FastGridColumn Property="Id" TItem="Book" Title="ID" />
-        <FastGridColumn Property="Name" TItem="Book" Title="Nome" />
-        <FastGridColumn Property="PageCount" TItem="Book" />
-        <FastGridColumn Property="WasRead" TItem="Book" Title="Foi lido" />
+        <FastGridColumn Property=@(nameof(Book.Id)) Title=""/>
+        <FastGridColumn Property=@(nameof(Book.Name)) Sortable="true" Title="Nome" />
+        <FastGridColumn Property=@(nameof(Book.PageCount)) Title="Número de Páginas" />
+        <FastGridColumn Property=@(nameof(Book.WasRead)) />
     </Columns>
 </FastGrid>
 
-<button @onclick=@Update >Update</button>
+<button class="btn btn-primary" @onclick=@(Update)>Update</button>
 
 @code
 {
-    private int Counter;
-
     private void Update()
     {
-        Numbers[0] = ++Counter;
+        Numbers[0]++;
     }
 
     protected override void OnInitialized()

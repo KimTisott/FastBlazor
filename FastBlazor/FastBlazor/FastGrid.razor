@@ -1,45 +1,58 @@
-﻿@typeparam TItem
+﻿@implements IFastGrid
+@typeparam TItem
 
-<CascadingValue IsFixed=true Value=this>
-    @Columns
+<CascadingValue IsFixed="true" Value=@(this)>
+    @(Columns)
 </CascadingValue>
 
 @if (Title != null)
 {
     <h1>
-        @Title
+        @(Title)
     </h1>
 }
 else
 {
     <h1>
-        @typeof(TItem).Name List
+        @(typeof(TItem).Name) List
     </h1>
 }
-
 <table class="table">
     <thead>
         <tr>
-            @if (Columns == null)
+            @foreach (var column in GridColumns)
             {
-                @if (typeof(TItem).IsClass)
-                {
-                    @foreach (var property in typeof(TItem).GetProperties())
-                    {
-                        <th>@property.Name</th>
-                    }
-                }
-                else
-                {
-                    <th>@typeof(TItem).Name</th>
-                }
-            }
-            else
-            {
-                @foreach (var column in GridColumns)
-                {
-                    <th>@(column.Title ?? column.Property)</th>
-                }
+                <th>
+                    <div class="unselectable" @onclick="_ => Sort(column)" style="@(column.Sortable ? "cursor:pointer" : "")">
+
+                        @(column.Title)
+
+                        @if (column.Sortable)
+                        {
+                            @switch (column.SortOrder)
+                            {
+                                case null:
+
+                                    <i class="glyphicon glyphicon-sort" />
+
+                                    break;
+
+                                case false:
+
+                                    <i class="glyphicon glyphicon-sort-by-alphabet" />
+
+                                    break;
+
+                                case true:
+
+                                    <i class="glyphicon glyphicon-sort-by-alphabet-alt" />
+
+                                    break;
+                            }
+                        }
+
+                    </div>
+                </th>
             }
         </tr>
     </thead>
@@ -87,22 +100,57 @@ else
     [Parameter]
     public RenderFragment Columns { get; set; }
 
-    private readonly List<FastGridColumn<TItem>> GridColumns = new List<FastGridColumn<TItem>>();
-
-    internal void AddColumn(FastGridColumn<TItem> column)
-    {
-        GridColumns.Add(column);
-    }
+    private IList<TItem> GridData;
 
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
-            // The first render will instantiate the GridColumn defined in the ChildContent.
-            // GridColumn calls AddColumn during its initialization. This means that until
-            // the first render is completed, the columns collection is empty.
-            // Calling StateHasChanged() will re-render the component, so the second time it will know the columns
             StateHasChanged();
+
+            GridData = Data;
         }
+    }
+
+    private void Sort(FastGridColumn column)
+    {
+        if (column.Sortable)
+        {
+            switch (column.SortOrder)
+            {
+                case null:
+
+                    Data = GridData.OrderBy(x => typeof(TItem).GetProperty(column.Property).GetValue(x)).ToList();
+
+                    column.SortOrder = false;
+
+                    break;
+
+                case false:
+
+                    Data = GridData.OrderByDescending(x => typeof(TItem).GetProperty(column.Property).GetValue(x)).ToList();
+
+                    column.SortOrder = true;
+
+                    break;
+
+                case true:
+
+                    Data = GridData;
+
+                    column.SortOrder = null;
+
+                    break;
+            }
+        }
+    }
+
+    private readonly List<FastGridColumn> GridColumns = new List<FastGridColumn>();
+
+    Type IFastGrid.Type { get { return typeof(TItem); } }
+
+    void IFastGrid.AddColumn(FastGridColumn column)
+    {
+        GridColumns.Add(column);
     }
 }
