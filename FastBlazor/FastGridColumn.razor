@@ -1,4 +1,6 @@
-﻿@code
+﻿@using FastBlazor.Enums
+
+@code
 {
     protected override void OnInitialized()
     {
@@ -61,5 +63,5 @@
     [Parameter]
     public bool Sortable { get; set; }
 
-    public bool? SortOrder { get; set; }
+    public SortOrder SortOrder { get; set; }
 }

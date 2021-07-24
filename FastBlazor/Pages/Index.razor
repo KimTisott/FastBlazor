@@ -1,11 +1,11 @@
 ﻿@page "/"
+@using FastBlazor.Enums 
 
-<FastGrid Data=@(Books)>
+<FastGrid Data=@(Books) SortType="SortType.Multiple" Title="Meus Livros">
     <Columns>
-        <FastGridColumn Property=@(nameof(Book.Id)) Title=""/>
         <FastGridColumn Property=@(nameof(Book.Name)) Sortable="true" Title="Nome" />
-        <FastGridColumn Property=@(nameof(Book.PageCount)) Title="Número de Páginas" />
-        <FastGridColumn Property=@(nameof(Book.WasRead)) />
+        <FastGridColumn Property=@(nameof(Book.PageCount)) Sortable="true" Title="Número de Páginas" />
+        <FastGridColumn Property=@(nameof(Book.WasRead)) Sortable="true" Title="Lido"/>
     </Columns>
 </FastGrid>
 
@@ -33,15 +33,15 @@
     public List<Book> Books = new List<Book>()
     {
         new Book("A", 100, false),
-        new Book("B", 90,  true ),
-        new Book("C", 80,  false),
+        new Book("B", 80,  true ),
+        new Book("C", 90,  false),
         new Book("D", 70,  true ),
-        new Book("E", 60,  false),
-        new Book("F", 50,  true ),
+        new Book("E", 50,  false),
+        new Book("F", 60,  true ),
         new Book("G", 40,  false),
         new Book("H", 30,  true ),
-        new Book("I", 20,  false),
-        new Book("J", 10,  true )
+        new Book("I", 10,  false),
+        new Book("J", 20,  true )
     };
 
     public class Book

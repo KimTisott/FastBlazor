@@ -1,5 +1,6 @@
 ﻿@implements IFastGrid
 @typeparam TItem
+@using FastBlazor.Enums
 
 <CascadingValue IsFixed="true" Value=@(this)>
     @(Columns)
@@ -31,21 +32,21 @@ else
                         {
                             @switch (column.SortOrder)
                             {
-                                case null:
+                                case SortOrder.None:
 
                                     <i class="glyphicon glyphicon-sort" />
 
                                     break;
 
-                                case false:
+                                case SortOrder.Ascending:
 
-                                    <i class="glyphicon glyphicon-sort-by-alphabet" />
+                                    <i class="glyphicon glyphicon-arrow-up" />
 
                                     break;
 
-                                case true:
+                                case SortOrder.Descending:
 
-                                    <i class="glyphicon glyphicon-sort-by-alphabet-alt" />
+                                    <i class="glyphicon glyphicon-arrow-down" />
 
                                     break;
                             }
@@ -92,10 +93,13 @@ else
 @code
 {
     [Parameter]
-    public string Title { get; set; }
+    public IList<TItem> Data { get; set; }
 
     [Parameter]
-    public IList<TItem> Data { get; set; }
+    public SortType SortType { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
 
     [Parameter]
     public RenderFragment Columns { get; set; }
@@ -116,29 +120,30 @@ else
     {
         if (column.Sortable)
         {
+            column.SortOrder = column.SortOrder.Next();
+
+            GridColumns.Where(x => x != column).ToList().ForEach(column =>
+            {
+                column.SortOrder = SortOrder.None;
+            });
+
             switch (column.SortOrder)
             {
-                case null:
-
-                    Data = GridData.OrderBy(x => typeof(TItem).GetProperty(column.Property).GetValue(x)).ToList();
-
-                    column.SortOrder = false;
-
-                    break;
-
-                case false:
-
-                    Data = GridData.OrderByDescending(x => typeof(TItem).GetProperty(column.Property).GetValue(x)).ToList();
-
-                    column.SortOrder = true;
-
-                    break;
-
-                case true:
+                case SortOrder.None:
 
                     Data = GridData;
 
-                    column.SortOrder = null;
+                    break;
+
+                case SortOrder.Ascending:
+
+                    Data = GridData.OrderBy(x => typeof(TItem).GetProperty(column.Property).GetValue(x)).ToList();
+
+                    break;
+
+                case SortOrder.Descending:
+
+                    Data = GridData.OrderByDescending(x => typeof(TItem).GetProperty(column.Property).GetValue(x)).ToList();
 
                     break;
             }
