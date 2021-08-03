@@ -1,10 +1,10 @@
 ﻿@page "/"
 @using FastBlazor.Enums 
 
-<FastGrid Data=@(Books) SortType="SortType.Multiple" Title="Meus Livros">
+<FastGrid Data=@(Books) Title="Meus Livros">
     <Columns>
         <FastGridColumn Property=@(nameof(Book.Name)) Sortable="true" Title="Nome" />
-        <FastGridColumn Property=@(nameof(Book.PageCount)) Sortable="true" Title="Número de Páginas" />
+        <FastGridColumn Property=@(nameof(Book.PageCount)) Sortable="false" Title="Número de Páginas" />
         <FastGridColumn Property=@(nameof(Book.WasRead)) Sortable="true" Title="Lido"/>
     </Columns>
 </FastGrid>
