@@ -1,22 +1,20 @@
 ﻿@page "/"
 @using FastBlazor.Enums 
 
-<FastGrid Data=@(Books) Title="Meus Livros">
+<FastCheckBox @bind-Value="@(Value)" TItem="bool"/>
+
+<FastCheckBox Visible="@(Value)" TItem="bool" />
+
+<FastGrid Data="@(Books)" Title="Meus Livros">
     <Columns>
-        <FastGridColumn Property=@(nameof(Book.Name)) Sortable="true" Title="Nome" />
-        <FastGridColumn Property=@(nameof(Book.PageCount)) Sortable="false" Title="Número de Páginas" />
-        <FastGridColumn Property=@(nameof(Book.WasRead)) Sortable="true" Title="Lido"/>
+        <FastGridColumn Property="@(nameof(Book.Name))" Sortable="true" Title="Nome" />
+        <FastGridColumn Property="@(nameof(Book.PageCount))" Sortable="false" Title="Número de Páginas" />
+        <FastGridColumn Property="@(nameof(Book.WasRead))" Sortable="true" Title="Lido"/>
     </Columns>
 </FastGrid>
 
-<button class="btn btn-primary" @onclick=@(Update)>Update</button>
-
 @code
 {
-    private void Update()
-    {
-        Numbers[0]++;
-    }
 
     protected override void OnInitialized()
     {
@@ -27,6 +25,8 @@
             Numbers[i] = i + 1;
         }
     }
+
+    public bool Value;
 
     public int[] Numbers;
 

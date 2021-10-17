@@ -6,18 +6,19 @@
     @(Columns)
 </CascadingValue>
 
-@if (Title != null)
-{
-    <h1>
+
+<h1>
+    @if (Title != null)
+    {
+
         @(Title)
-    </h1>
-}
-else
-{
-    <h1>
-        @(typeof(TItem).Name) List
-    </h1>
-}
+
+    }
+    else
+    {
+        @($"{typeof(TItem).Name} List")
+    }
+</h1>
 <table class="table">
     <thead>
         <tr>
@@ -34,19 +35,19 @@ else
                             {
                                 case SortOrder.None:
 
-                                    <i class="glyphicon glyphicon-sort" />
+                                    <i class="glyphicon glyphicon-sort" style="float: right" />
 
                                     break;
 
                                 case SortOrder.Ascending:
 
-                                    <i class="glyphicon glyphicon-arrow-up" />
+                                    <i class="glyphicon glyphicon-arrow-up" style="float: right" />
 
                                     break;
 
                                 case SortOrder.Descending:
 
-                                    <i class="glyphicon glyphicon-arrow-down" />
+                                    <i class="glyphicon glyphicon-arrow-down" style="float: right" />
 
                                     break;
                             }

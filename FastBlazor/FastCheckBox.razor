@@ -1,0 +1,12 @@
+﻿@inherits FastEditor<TItem>
+@typeparam TItem
+
+@if (Visible)
+{
+    <input checked=@(object.Equals(Value, true)) type="checkbox"/>
+}
+
+@code
+{
+
+}
